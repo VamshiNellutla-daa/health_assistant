@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Health Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Health Assistant AI</h1>
+        <textarea id="symptomInput" placeholder="Describe how you are feeling (e.g., 'Persistent cough and sore throat')..."></textarea>
+        <button onclick="analyzeSymptoms()" id="btn">Analyze Symptoms</button>
+        
+        <div id="loading" class="hidden">Scanning medical database...</div>
+        <div id="result" class="result-box hidden"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
