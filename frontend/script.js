@@ -30,7 +30,16 @@ function renderResponse(answer) {
 
     const html = blocks.map((block, index) => {
         const title = block.title || `Section ${index + 1}`;
-        const listItems = block.items.map(item => `<li>${item}</li>`).join('');
+        const listItems = block.items.map(item => {
+            const words = item.split(' ');
+            if (words.length <= 4) {
+                return `<li><strong>${item}</strong></li>`;
+            }
+            const firstPart = words.slice(0, 3).join(' ');
+            const rest = words.slice(3).join(' ');
+            return `<li><strong>${firstPart}</strong> ${rest}</li>`;
+        }).join('');
+
         return `
             <div class="block">
                 <h2>${title}</h2>

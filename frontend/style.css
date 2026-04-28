@@ -119,21 +119,23 @@ button:hover {
 
 .result-panel {
     margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
 }
 
 .block {
     border: 1px solid rgba(15, 23, 42, 0.08);
     background: #ffffff;
-    border-radius: 20px;
-    padding: 22px;
-    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
-    margin-bottom: 18px;
+    border-radius: 24px;
+    padding: 26px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
 }
 
 .block h2 {
-    margin: 0 0 14px;
-    font-size: 1.05rem;
-    color: #111827;
+    margin: 0 0 18px;
+    font-size: 1.15rem;
+    color: #0f172a;
 }
 
 .block ul {
@@ -143,12 +145,25 @@ button:hover {
 }
 
 .block li {
-    margin-bottom: 12px;
-    line-height: 1.7;
+    margin-bottom: 14px;
+    line-height: 1.75;
+    font-size: 0.99rem;
+}
+
+.block li strong {
+    display: inline-block;
+    font-weight: 700;
+    color: #111827;
 }
 
 .block li:last-child {
     margin-bottom: 0;
+}
+
+@media (max-width: 860px) {
+    .result-panel {
+        grid-template-columns: 1fr;
+    }
 }
 
 .hidden {
