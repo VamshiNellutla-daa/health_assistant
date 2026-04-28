@@ -7,14 +7,28 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Health Assistant AI</h1>
-        <textarea id="symptomInput" placeholder="Describe how you are feeling (e.g., 'Persistent cough and sore throat')..."></textarea>
-        <button onclick="analyzeSymptoms()" id="btn">Analyze Symptoms</button>
-        
-        <div id="loading" class="hidden">Scanning medical database...</div>
-        <div id="result" class="result-box hidden"></div>
+    <div class="page-shell">
+        <div class="container">
+            <div class="hero">
+                <div>
+                    <p class="eyebrow">Health Assistant</p>
+                    <h1>Medical symptom analysis powered by LLM</h1>
+                    <p class="subtitle">Enter your symptoms below and get possible causes, home care suggestions, specialist recommendations, and a safety disclaimer.</p>
+                </div>
+            </div>
+
+            <div class="chat-panel">
+                <label for="symptomInput" class="input-label">Tell me what you're feeling</label>
+                <textarea id="symptomInput" placeholder="Example: Fever, headache, and nausea for two days..."></textarea>
+                <p class="disclaimer">This project is a research prototype and not medical advice.</p>
+                <button onclick="analyzeSymptoms()" id="btn">Analyze Symptoms</button>
+
+                <div id="loading" class="hidden loading-panel">Processing your request...</div>
+                <div id="result" class="result-panel hidden"></div>
+            </div>
+        </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

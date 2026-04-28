@@ -1,13 +1,60 @@
+function renderResponse(answer) {
+    const normalized = answer || '';
+    const lines = normalized
+        .split(/\r?\n/)          
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+
+    const blocks = [];
+    let currentTitle = 'Response';
+    let currentItems = [];
+
+    lines.forEach(line => {
+        const titleMatch = line.match(/^\s*(?:\d+\.|[A-Za-z ]+:)\s*(.*)$/);
+        if (titleMatch && line.endsWith(':')) {
+            if (currentItems.length) {
+                blocks.push({ title: currentTitle, items: currentItems });
+                currentItems = [];
+            }
+            currentTitle = line.replace(/:$/, '').trim();
+        } else if (line.startsWith('- ') || line.startsWith('* ') || line.match(/^\d+\./)) {
+            currentItems.push(line.replace(/^[-*\d\.\s]+/, '').trim());
+        } else {
+            currentItems.push(line);
+        }
+    });
+
+    if (currentItems.length) {
+        blocks.push({ title: currentTitle, items: currentItems });
+    }
+
+    const html = blocks.map((block, index) => {
+        const title = block.title || `Section ${index + 1}`;
+        const listItems = block.items.map(item => `<li>${item}</li>`).join('');
+        return `
+            <div class="block">
+                <h2>${title}</h2>
+                <ul>${listItems}</ul>
+            </div>
+        `;
+    }).join('');
+
+    return html || '<div class="block"><h2>Result</h2><p>No response received.</p></div>';
+}
+
 async function analyzeSymptoms() {
-    const input = document.getElementById('symptomInput').value;
+    const input = document.getElementById('symptomInput').value.trim();
     const resultDiv = document.getElementById('result');
     const loading = document.getElementById('loading');
 
-    if (!input) return alert("Please enter symptoms.");
+    if (!input) {
+        alert('Please enter symptoms.');
+        return;
+    }
 
-    // UI Updates
     loading.classList.remove('hidden');
     resultDiv.classList.add('hidden');
+    resultDiv.innerHTML = '';
 
     try {
         const response = await fetch('/analyze', {
@@ -17,10 +64,10 @@ async function analyzeSymptoms() {
         });
 
         const data = await response.json();
-        resultDiv.innerText = data.answer;
+        resultDiv.innerHTML = renderResponse(data.answer || data.error || 'No response available.');
         resultDiv.classList.remove('hidden');
     } catch (error) {
-        resultDiv.innerText = "Error connecting to the server.";
+        resultDiv.innerHTML = '<div class="block"><h2>Error</h2><ul><li>Unable to connect to the server. Please try again later.</li></ul></div>';
         resultDiv.classList.remove('hidden');
     } finally {
         loading.classList.add('hidden');
