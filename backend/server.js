@@ -12,7 +12,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
-app.use(cors());
+//app.use(cors());
+app.use(cors({
+    origin: 'https://health-assistant-3qrn.onrender.com', 
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, '../frontend')));
