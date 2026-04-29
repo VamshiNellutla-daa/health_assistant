@@ -3,29 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Health Assistant</title>
+    <title>My Health Assistant</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="page-shell">
-        <div class="container">
-            <div class="hero">
-                <div>
-                    <p class="eyebrow">Health Assistant</p>
-                    <h1>Medical symptom analysis powered by LLM</h1>
-                    <p class="subtitle">Enter your symptoms below and get possible causes, home care suggestions, specialist recommendations, and a safety disclaimer.</p>
-                </div>
-            </div>
+    <div class="phone-shell">
+        <div class="app-card">
+            <header class="top-bar">
+                <span class="title">MY HEALTH ASSISTANT</span>
+            </header>
 
-            <div class="chat-panel">
-                <label for="symptomInput" class="input-label">Tell me what you're feeling</label>
-                <textarea id="symptomInput" placeholder="Example: Fever, headache, and nausea for two days..."></textarea>
-                <p class="disclaimer">This project is a research prototype and not medical advice.</p>
-                <button onclick="analyzeSymptoms()" id="btn">Analyze Symptoms</button>
+            <main class="card-body">
+                <section class="input-section">
+                    <div class="section-title">Symptoms</div>
+                    <textarea id="symptomInput" placeholder="Describe your symptoms here..."></textarea>
 
-                <div id="loading" class="hidden loading-panel">Processing your request...</div>
-                <div id="result" class="result-panel hidden"></div>
-            </div>
+                    <div class="upload-section">
+                        <div class="upload-label-row">
+                            <span class="upload-title">Upload Image</span>
+                            <label class="upload-button" for="imageInput">Upload</label>
+                        </div>
+                        <div class="upload-note">Use camera or choose a file</div>
+                        <input id="imageInput" type="file" accept="image/*" capture="environment" hidden>
+                        <div class="upload-status-row">
+                            <div id="imageName" class="upload-status">No image selected</div>
+                            <button id="removeImageBtn" class="remove-btn" style="display:none;">×</button>
+                        </div>
+                    </div>
+
+                    <p class="disclaimer">DISCLAIMER: This is a prototype and not medical advice.</p>
+                    <button type="button" class="show-results-button" id="showResultsBtn">SHOW RESULTS</button>
+                </section>
+
+                <section class="results-section">
+                    <div id="categoryButtons" class="category-buttons hidden"></div>
+                </section>
+            </main>
         </div>
     </div>
 

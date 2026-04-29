@@ -1,84 +1,182 @@
-function renderResponse(answer) {
-    const normalized = answer || '';
-    const lines = normalized
-        .split(/\r?\n/)          
-        .map(line => line.trim())
-        .filter(line => line.length > 0);
+const categories = [
+    { key: 'possible causes', label: 'Possible Causes' },
+    { key: 'natural remedies', label: 'Natural Remedies' },
+    { key: 'accupressure points', label: 'Accupressure Points' },
+    { key: 'mudras', label: 'Mudras' },
+    { key: 'doctor suggestion', label: 'Doctor Suggestion' }
+];
 
-    const blocks = [];
-    let currentTitle = 'Response';
-    let currentItems = [];
+let parsedSections = {};
+
+const showResultsBtn = document.getElementById('showResultsBtn');
+const categoryButtons = document.getElementById('categoryButtons');
+const imageInput = document.getElementById('imageInput');
+const imageName = document.getElementById('imageName');
+const removeImageBtn = document.getElementById('removeImageBtn');
+
+showResultsBtn.addEventListener('click', showResults);
+imageInput.addEventListener('change', () => {
+    const file = imageInput.files[0];
+    imageName.textContent = file ? file.name : 'No image selected';
+    removeImageBtn.style.display = file ? 'inline-flex' : 'none';
+});
+
+removeImageBtn.addEventListener('click', () => {
+    imageInput.value = '';
+    imageName.textContent = 'No image selected';
+    removeImageBtn.style.display = 'none';
+});
+
+function normalizeHeading(text) {
+    const normalized = text.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+    if (normalized.includes('possible cause')) return 'possible causes';
+    if (normalized.includes('natural remedy')) return 'natural remedies';
+    if (normalized.includes('accupressure')) return 'accupressure points';
+    if (normalized.includes('mudra')) return 'mudras';
+    if (normalized.includes('doctor suggestion') || normalized.includes('doctor recommendations') || normalized.includes('doctor advice')) return 'doctor suggestion';
+    return 'possible causes';
+}
+
+function parseResponse(answer) {
+    const sections = {};
+    categories.forEach(cat => sections[cat.key] = []);
+
+    const cleanText = (answer || '').replace(/\r\n/g, '\n');
+    const lines = cleanText.split(/\n+/).map(line => line.trim()).filter(line => line.length > 0);
+
+    let currentKey = 'possible causes';
 
     lines.forEach(line => {
-        const titleMatch = line.match(/^\s*(?:\d+\.|[A-Za-z ]+:)\s*(.*)$/);
-        if (titleMatch && line.endsWith(':')) {
-            if (currentItems.length) {
-                blocks.push({ title: currentTitle, items: currentItems });
-                currentItems = [];
-            }
-            currentTitle = line.replace(/:$/, '').trim();
-        } else if (line.startsWith('- ') || line.startsWith('* ') || line.match(/^\d+\./)) {
-            currentItems.push(line.replace(/^[-*\d\.\s]+/, '').trim());
-        } else {
-            currentItems.push(line);
+        const lowerLine = line.toLowerCase();
+        if (lowerLine.includes('possible cause') && (lowerLine.includes(':') || lowerLine.includes('**') || lowerLine.length < 50)) {
+            currentKey = 'possible causes';
+            return;
+        }
+        if ((lowerLine.includes('natural remedy') || lowerLine.includes('home care') || lowerLine.includes('remedies')) && (lowerLine.includes(':') || lowerLine.includes('**') || lowerLine.length < 50)) {
+            currentKey = 'natural remedies';
+            return;
+        }
+        if ((lowerLine.includes('accupressure') || lowerLine.includes('acupressure')) && (lowerLine.includes(':') || lowerLine.includes('**') || lowerLine.length < 50)) {
+            currentKey = 'accupressure points';
+            return;
+        }
+     if ((lowerLine.includes('mudras') || lowerLine.includes('mudra')) && (lowerLine.includes(':') || lowerLine.includes('**') || lowerLine.length < 50)) {
+
+            currentKey = 'mudras';
+            return;
+        }
+        if (lowerLine.includes('doctor suggestion') || lowerLine.includes('doctor suggestions') || lowerLine.includes('doctor advice') || lowerLine.includes('doctor recommendation')) {
+            currentKey = 'doctor suggestion';
+            return;
+        }
+        
+
+        if (line.length > 0) {
+            sections[currentKey].push(line.replace(/^[\u2022•\-\*\d\.\s]+/, '').trim());
         }
     });
 
-    if (currentItems.length) {
-        blocks.push({ title: currentTitle, items: currentItems });
-    }
-
-    const html = blocks.map((block, index) => {
-        const title = block.title || `Section ${index + 1}`;
-        const listItems = block.items.map(item => {
-            const words = item.split(' ');
-            if (words.length <= 4) {
-                return `<li><strong>${item}</strong></li>`;
-            }
-            const firstPart = words.slice(0, 3).join(' ');
-            const rest = words.slice(3).join(' ');
-            return `<li><strong>${firstPart}</strong> ${rest}</li>`;
-        }).join('');
-
-        return `
-            <div class="block">
-                <h2>${title}</h2>
-                <ul>${listItems}</ul>
-            </div>
-        `;
-    }).join('');
-
-    return html || '<div class="block"><h2>Result</h2><p>No response received.</p></div>';
+    return sections;
 }
 
-async function analyzeSymptoms() {
-    const input = document.getElementById('symptomInput').value.trim();
-    const resultDiv = document.getElementById('result');
-    const loading = document.getElementById('loading');
+function renderCategoryButtons() {
+    categoryButtons.innerHTML = categories.map(cat => {
+        const id = `results-${cat.key.replace(/\s+/g, '-')}`;
+        return `
+        <div class="category-container">
+            <button type="button" class="category-button" data-key="${cat.key}">
+                ${cat.label}
+            </button>
+            <div class="category-results" id="${id}">
+                <ul></ul>
+            </div>
+        </div>
+    `;
+    }).join('');
 
-    if (!input) {
-        alert('Please enter symptoms.');
+    categoryButtons.querySelectorAll('.category-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const categoryKey = button.dataset.key;
+            const resultsDiv = document.getElementById(`results-${categoryKey.replace(/\s+/g, '-')}`);
+
+            const isActive = resultsDiv.style.display === 'block';
+            document.querySelectorAll('.category-results').forEach(div => div.style.display = 'none');
+            document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('active'));
+
+            if (!isActive) {
+                resultsDiv.style.display = 'block';
+                button.classList.add('active');
+                const resultList = resultsDiv.querySelector('ul');
+                renderResults(categoryKey, resultList);
+            }
+        });
+    });
+}
+
+function formatItemText(text) {
+    const important = /important|key|priority|best|recommended/i.test(text);
+    const words = text.split(' ');
+    if (words.length > 4) {
+        const firstPart = words.slice(0, 3).join(' ');
+        const rest = words.slice(3).join(' ');
+        return `<strong>${firstPart}</strong> ${rest}${important ? '' : ''}`;
+    }
+    return `<strong>${text}</strong>`;
+}
+
+function renderResults(categoryKey, resultListElement) {
+    const items = parsedSections[categoryKey] || [];
+    
+    resultListElement.innerHTML = items.length
+        ? items.map((item, idx) => {
+            const highlightClass = idx === 0 || /important|best|priority|recommended/i.test(item) ? 'highlight' : '';
+            return `<li class="${highlightClass}">${formatItemText(item)}</li>`;
+        }).join('')
+        : '<li>No details available for this category yet.</li>';
+}
+
+async function showResults() {
+    const input = document.getElementById('symptomInput').value.trim();
+    const hasImage = imageInput.files[0];
+    if (!input && !hasImage) {
+        alert('Please enter your symptoms or upload an image.');
         return;
     }
 
-    loading.classList.remove('hidden');
-    resultDiv.classList.add('hidden');
-    resultDiv.innerHTML = '';
+    showResultsBtn.textContent = 'Loading...';
+    showResultsBtn.disabled = true;
 
     try {
-        const response = await fetch('/analyze', {
+        const formData = new FormData();
+        formData.append('symptoms', input);
+        if (hasImage) {
+            formData.append('image', imageInput.files[0]);
+        }
+
+        const response = await fetch('http://localhost:5000/analyze', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ symptoms: input })
+            body: formData
         });
 
         const data = await response.json();
-        resultDiv.innerHTML = renderResponse(data.answer || data.error || 'No response available.');
-        resultDiv.classList.remove('hidden');
+        parsedSections = parseResponse(data.answer || data.error || '');
+        categoryButtons.classList.remove('hidden');
+        renderCategoryButtons();
     } catch (error) {
-        resultDiv.innerHTML = '<div class="block"><h2>Error</h2><ul><li>Unable to connect to the server. Please try again later.</li></ul></div>';
-        resultDiv.classList.remove('hidden');
+        parsedSections = {
+            'possible causes': ['Unable to connect to the server. Please try again later.'],
+            'natural remedies': [],
+            'accupressure points': [],
+            'mudras': [],
+            'doctor suggestion': []
+        };
+        categoryButtons.classList.remove('hidden');
+        renderCategoryButtons();
     } finally {
-        loading.classList.add('hidden');
+        showResultsBtn.textContent = 'SHOW RESULTS';
+        showResultsBtn.disabled = false;
     }
 }
+
+// Initially hide category buttons
+categoryButtons.classList.add('hidden');

@@ -1,0 +1,10 @@
+const fs = require('fs');
+const code = fs.readFileSync('frontend/script.js', 'utf8');
+const vm = require('vm');
+const sandbox = { console, module: {}, exports: {}, require };
+vm.createContext(sandbox);
+vm.runInContext(code.replace("const showResultsBtn = document.getElementById('showResultsBtn');", "const showResultsBtn = { addEventListener:function(){} }; ").replace("const categoryButtons = document.getElementById('categoryButtons');", "const categoryButtons = { classList: { add:function(){}, remove:function(){} }, innerHTML: '' }; "), sandbox);
+const parseResponse = sandbox.parseResponse;
+const sample = `Possible Causes:\n- Tension or stress\n- Hormonal changes\n- Sensitivity to certain foods or environmental factors\n- Neurological conditions such as migraines or cluster headaches\n- Some safe, science-backed home care remedies for migraine relief include:\n- Staying hydrated by drinking plenty of water\n- Applying a cold or warm compress to the forehead or neck\n- Practicing relaxation techniques such as deep breathing, meditation, or yoga\n- Avoiding triggers like bright lights, loud noises, or certain foods\nACUPRESSURE POINTS**:\n- GB21 (Gallbladder 21): Located at the base of the skull, applying pressure here can help relieve tension and pain\n- LI4 (Large Intestine 4): Found on the web between the thumb and index finger, pressing this point can help ease headache pain\n- Yintang (Third Eye Point): Located between the eyebrows, applying pressure here can help calm the mind\nDisclaimer: This is only educational content.`;
+const result = parseResponse(sample);
+console.log(JSON.stringify(result, null, 2));
