@@ -153,26 +153,31 @@ async function showResults() {
             formData.append('image', imageInput.files[0]);
         }
 
+        console.log('Sending request to /analyze...');
         const response = await fetch('/analyze', {
             method: 'POST',
-           // headers: { 'Content-Type': 'application/json' },
-           // body: JSON.stringify(data)
-            body:formData
+            body: formData
         });
 
+        console.log('Response received:', response.status, response.ok);
         const data = await response.json();
         
         if (!response.ok) {
-            throw new Error(data.error || 'Server error');
+            throw new Error(data.error || `Server error (${response.status})`);
         }
         
-        parsedSections = parseResponse(data.answer || data.error || '');
+        if (!data.answer) {
+            throw new Error('No response from server');
+        }
+        
+        parsedSections = parseResponse(data.answer);
         categoryButtons.classList.remove('hidden');
         renderCategoryButtons();
     } catch (error) {
         console.error('Error:', error);
+        const errorMsg = error.message || 'Unable to connect to the server';
         parsedSections = {
-            'possible causes': [`Error: ${error.message}. Please try again later.`],
+            'possible causes': [`Error: ${errorMsg}`],
             'natural remedies': [],
             'accupressure points': [],
             'mudras': [],

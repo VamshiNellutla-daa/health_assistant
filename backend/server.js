@@ -42,20 +42,27 @@ app.get('/health', (req, res) => {
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 app.post('/analyze', upload.single('image'), async (req, res) => {
-    const symptoms = req.body.symptoms || '';
-    const hasImage = !!req.file;
-    
-    if (!process.env.GROQ_API_KEY) {
-        return res.status(500).json({ error: 'GROQ_API_KEY is not configured on the server' });
-    }
-    
-    const imagePrompt = hasImage
-        ? 'The user has uploaded an image. Incorporate any relevant visual clues from the image when possible, but do not hallucinate details that are not clearly visible.'
-        : '';
-
     try {
+        const symptoms = req.body.symptoms || '';
+        const hasImage = !!req.file;
+        
+        console.log('Request received:', { symptoms: symptoms.substring(0, 50), hasImage });
+        
+        if (!symptoms.trim()) {
+            return res.status(400).json({ error: 'Please describe your symptoms' });
+        }
+        
+        if (!process.env.GROQ_API_KEY) {
+            console.error('GROQ_API_KEY not configured');
+            return res.status(500).json({ error: 'Server configuration error: API key missing' });
+        }
+        
+        const imagePrompt = hasImage
+            ? 'The user has uploaded an image. Incorporate any relevant visual clues from the image when possible, but do not hallucinate details that are not clearly visible.'
+            : '';
+
+        console.log('Calling Groq API...');
         const completion = await groq.chat.completions.create({
-            // Using the 70B model for high-quality medical reasoning
             model: "llama-3.3-70b-versatile",
             messages: [
                 {
@@ -71,13 +78,16 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
                 },
                 { role: "user", content: `Symptoms: ${symptoms}\n${imagePrompt}` }
             ],
-            temperature: 0.3, // Lower temperature for more factual, stable answers
+            temperature: 0.3,
         });
 
+        console.log('Groq response received');
         res.json({ answer: completion.choices[0].message.content });
     } catch (error) {
-        console.error('Groq error:', error);
-        res.status(500).json({ error: error.message || "Failed to connect to Groq" });
+        console.error('Error in /analyze:', error.message, error.status);
+        const statusCode = error.status || 500;
+        const errorMessage = error.message || 'Failed to process request';
+        res.status(statusCode).json({ error: errorMessage });
     }
 });
 
