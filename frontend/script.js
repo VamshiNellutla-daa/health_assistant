@@ -155,8 +155,9 @@ async function showResults() {
 
         const response = await fetch('https://health-assistant-backend.onrender.com/api/analyze', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+           // headers: { 'Content-Type': 'application/json' },
+           // body: JSON.stringify(data)
+            body:formData
         });
 
         const data = await response.json();
