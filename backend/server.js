@@ -26,11 +26,21 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ status: 'Server is running', hasGroqKey: !!process.env.GROQ_API_KEY });
+});
+
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 app.post('/analyze', upload.single('image'), async (req, res) => {
     const symptoms = req.body.symptoms || '';
     const hasImage = !!req.file;
+    
+    if (!process.env.GROQ_API_KEY) {
+        return res.status(500).json({ error: 'GROQ_API_KEY is not configured on the server' });
+    }
+    
     const imagePrompt = hasImage
         ? 'The user has uploaded an image. Incorporate any relevant visual clues from the image when possible, but do not hallucinate details that are not clearly visible.'
         : '';
@@ -64,4 +74,4 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Brain active on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Brain active on port ${PORT}`));

@@ -161,12 +161,18 @@ async function showResults() {
         });
 
         const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Server error');
+        }
+        
         parsedSections = parseResponse(data.answer || data.error || '');
         categoryButtons.classList.remove('hidden');
         renderCategoryButtons();
     } catch (error) {
+        console.error('Error:', error);
         parsedSections = {
-            'possible causes': ['Unable to connect to the server. Please try again later.'],
+            'possible causes': [`Error: ${error.message}. Please try again later.`],
             'natural remedies': [],
             'accupressure points': [],
             'mudras': [],
