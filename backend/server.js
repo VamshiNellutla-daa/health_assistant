@@ -15,8 +15,9 @@ const upload = multer({ storage: multer.memoryStorage() });
 //app.use(cors());
 // Remove the old app.use(cors(...)) and paste this:
 app.use(cors({
-    origin: true, // This tells the server to accept the origin of whoever is calling it
-    credentials: true
+    origin: '*', 
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
