@@ -13,10 +13,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 //app.use(cors());
+// Remove the old app.use(cors(...)) and paste this:
 app.use(cors({
-    origin: 'https://health-assistant-3qrn.onrender.com', 
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
+    origin: true, // This tells the server to accept the origin of whoever is calling it
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
