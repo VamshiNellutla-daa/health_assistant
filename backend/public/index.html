@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Health Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="phone-shell">
+        <div class="app-card">
+            <header class="top-bar">
+                <span class="title">MY HEALTH ASSISTANT</span>
+            </header>
+
+            <main class="card-body">
+                <section class="input-section">
+                    <div class="section-title">Symptoms</div>
+                    <textarea id="symptomInput" placeholder="Describe your symptoms here..."></textarea>
+
+                    <div class="upload-section">
+                        <div class="upload-label-row">
+                            <span class="upload-title">Upload Image</span>
+                            <label class="upload-button" for="imageInput">Upload</label>
+                        </div>
+                        <div class="upload-note">Use camera or choose a file</div>
+                        <input id="imageInput" type="file" accept="image/*" capture="environment" hidden>
+                        <div class="upload-status-row">
+                            <div id="imageName" class="upload-status">No image selected</div>
+                            <button id="removeImageBtn" class="remove-btn" style="display:none;">×</button>
+                        </div>
+                    </div>
+
+                    <p class="disclaimer">DISCLAIMER: This is a prototype and not medical advice.</p>
+                    <button type="button" class="show-results-button" id="showResultsBtn">SHOW RESULTS</button>
+                </section>
+
+                <section class="results-section">
+                    <div id="categoryButtons" class="category-buttons hidden"></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
