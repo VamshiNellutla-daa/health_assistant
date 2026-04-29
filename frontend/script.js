@@ -153,9 +153,10 @@ async function showResults() {
             formData.append('image', imageInput.files[0]);
         }
 
-        const response = await fetch('http://localhost:5000/analyze', {
+        const response = await fetch('/analyze', {
             method: 'POST',
-            body: formData
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
         });
 
         const data = await response.json();
