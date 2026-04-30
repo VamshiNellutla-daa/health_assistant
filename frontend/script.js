@@ -153,10 +153,13 @@ async function showResults() {
             formData.append('image', imageInput.files[0]);
         }
 
+
         const response = await fetch('/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ symptoms: input })
+
+        
         });
 
         console.log('Response received:', response.status, response.ok);
