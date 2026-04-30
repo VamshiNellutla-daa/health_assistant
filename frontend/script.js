@@ -153,10 +153,10 @@ async function showResults() {
             formData.append('image', imageInput.files[0]);
         }
 
-        const response = await fetch('https://health-assistant-backend.onrender.com/api/analyze', {
+        const response = await fetch('/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: JSON.stringify({ symptoms: input })
         });
 
         const data = await response.json();
