@@ -12,18 +12,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
-<<<<<<< HEAD
 const cors = require('cors');
 app.use(cors());
-=======
-//app.use(cors());
-// Remove the old app.use(cors(...)) and paste this:
-app.use(cors({
-    origin: '*', 
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
->>>>>>> 6c0e0879abee6b479db6cdb85b52259608ed91f3
 app.use(express.json());
 
 // Disable caching for all responses
