@@ -153,17 +153,10 @@ async function showResults() {
             formData.append('image', imageInput.files[0]);
         }
 
-<<<<<<< HEAD
-        const response = await fetch('/analyze', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ symptoms: input })
-=======
         console.log('Sending request to /analyze...');
         const response = await fetch('/analyze', {
             method: 'POST',
             body: formData
->>>>>>> 6c0e0879abee6b479db6cdb85b52259608ed91f3
         });
 
         console.log('Response received:', response.status, response.ok);
