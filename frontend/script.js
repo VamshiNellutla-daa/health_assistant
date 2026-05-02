@@ -32,7 +32,7 @@ function normalizeHeading(text) {
     if (normalized.includes('possible cause')) return 'possible causes';
     if (normalized.includes('natural remedy')) return 'natural remedies';
     if (normalized.includes('accupressure')) return 'accupressure points';
-    if (normalized.includes('mudra')) return 'mudras';
+    if (normalized.includes('mudra') || normalized.includes('mudras') || normalized.includes('hand gestures')) return 'mudras';
     if (normalized.includes('doctor suggestion') || normalized.includes('doctor recommendations') || normalized.includes('doctor advice')) return 'doctor suggestion';
     return 'possible causes';
 }
