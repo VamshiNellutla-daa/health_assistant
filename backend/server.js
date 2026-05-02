@@ -74,7 +74,7 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
             ],
             temperature: 0.3,
         });
-
+        console.log(completion.choices[0].message.content);
         console.log('Groq response received');
         res.json({ answer: completion.choices[0].message.content });
     } catch (error) {
