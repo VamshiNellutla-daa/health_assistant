@@ -60,7 +60,7 @@ function parseResponse(answer) {
             currentKey = 'accupressure points';
             return;
         }
-     if ((lowerLine.includes('mudras') || lowerLine.includes('mudra')) && (lowerLine.includes(':') || lowerLine.includes('**') || lowerLine.length < 50)) {
+     if (lowerLine.includes('mudras') && (lowerLine.includes(':') || (lowerLine.includes('mudra') || lowerLine.includes('**') || lowerLine.length < 50)) {
 
             currentKey = 'mudras';
             return;
