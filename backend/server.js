@@ -68,7 +68,7 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
                     3. ACCUPRESSURE POINTS: Recommend specific pressure points for relief.
                     4. MUDRAS: Recommend specific mudra for relief.
                     5. DOCTOR SUGGESTIONS: Recommend the specific type of doctor to visit (e.g., Dermatologist, ENT).
-                    
+                    `
                 },
                 { role: "user", content: `Symptoms: ${symptoms}\n${imagePrompt}` }
             ],
