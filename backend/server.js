@@ -66,7 +66,7 @@ app.post('/analyze', upload.single('image'), async (req, res) => {
                     1. POSSIBLE CAUSES: List 3-4 likely conditions.
                     2. NATURAL REMEDIES: Suggest safe, ayurvedic natural home remedies.
                     3. ACCUPRESSURE POINTS: Recommend specific pressure points for relief.
-                    4. MUDRAS: Recommend mudra.
+                    4. MUDRAS: Recommend specific mudra for relief.
                     5. DOCTOR SUGGESTIONS: Recommend the specific type of doctor to visit (e.g., Dermatologist, ENT).
                     
                 },
